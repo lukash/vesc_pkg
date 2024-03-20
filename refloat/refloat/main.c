@@ -2404,6 +2404,22 @@ static void lights_control_request(CfgLeds *leds, uint8_t *buffer, size_t len, L
             leds->headlights_on = value & 0x2;
         }
 
+        if (len > 4) {
+            uint8_t brightness = buffer[2];
+            uint8_t brightness_idle = buffer[3];
+            uint8_t brightness_status = buffer[4];
+
+            leds->headlights.brightness = (float)(brightness) / 100.0;
+            leds->taillights.brightness = (float)(brightness) / 100.0;
+            leds->front.brightness = (float)(brightness_idle) / 100.0;
+            leds->rear.brightness = (float)(brightness_idle) / 100.0;
+            leds->status_idle.brightness = (float)(brightness_status) / 100.0;
+        }
+
+        if (len > 7) {
+            // TODO: allow changing of headlight pattern, idle pattern, and status pattern/mode
+        }
+
         if (lcm->enabled) {
             lcm_configure(lcm, leds);
         }
